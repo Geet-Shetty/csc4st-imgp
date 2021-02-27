@@ -107,6 +107,16 @@ public class Image extends ImageObjectAbstract {
 
     //OPERATIONS
 
+    public void applyTable(int[][] table){
+        for(int i = 0; i < 3; i++){
+            for (int y = 0; y < image[0].length; ++y) {
+                for (int x = 0; x < image[0][0].length; ++x) {
+                    image[i][y][x] = table[i][image[i][y][x]];
+                }
+            }
+        }
+    }
+
     public void add(int r, int g, int b){
         int[] ASR = new int[256];
         int[] ASG = new int[256];
@@ -163,13 +173,11 @@ public class Image extends ImageObjectAbstract {
     // Constast
 
     public void stretch(int s_min, int s_max){ // can be used for auto also
-            for (int y = 0; y < image[0].length; ++y) {
-                for (int x = 0; x < image[0][0].length; ++x) {
-                    image[0][y][x] = Global_Funcs.clamp(Global_Funcs.scale( image[0][y][x], s_min, s_max,0,255));
-                    image[1][y][x] = Global_Funcs.clamp(Global_Funcs.scale( image[1][y][x], s_min, s_max,0,255));
-                    image[2][y][x] = Global_Funcs.clamp(Global_Funcs.scale( image[2][y][x], s_min, s_max,0,255));
-                }
-            }
+        int[] AS = new int[256];
+        for(int i = 0; i < 256; i++){
+            AS[i] = Global_Funcs.clamp(Global_Funcs.scale(i, s_min, s_max,0,255));
+        }
+        applyTable(new int[][]{AS,AS,AS});
     }
 
     public void stretch_auto(Histogram hist){
@@ -177,16 +185,6 @@ public class Image extends ImageObjectAbstract {
     }
 
     // GAMMA
-
-    public void applyTable(int[][] table){
-        for(int i = 0; i < 3; i++){
-            for (int y = 0; y < image[0].length; ++y) {
-                for (int x = 0; x < image[0][0].length; ++x) {
-                    image[i][y][x] = table[i][image[i][y][x]];
-                }
-            }
-        }
-    }
 
     public void setGamma_table(double r, double g, double b){
         int K = 256;
@@ -213,7 +211,6 @@ public class Image extends ImageObjectAbstract {
     public void blend(double alpha, Image I){
         if(alpha >= 0 && alpha <= 1.0) {
             int i_data[][][] = I.getImage();
-            //out=((int) in1[x] + alpha * ((int) in2[x] - (int) in1[x]));
             for (int i = 0; i < 3; i++) {
                 for (int y = 0; y < image[0].length; ++y) {
                     for (int x = 0; x < image[0][0].length; ++x) {
