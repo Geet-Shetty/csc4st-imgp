@@ -108,13 +108,15 @@ public class Image extends ImageObjectAbstract {
     //OPERATIONS
 
     public void add(int r, int g, int b){
-        for (int y = 0; y < image[0].length; ++y) {
-            for (int x = 0; x < image[0][0].length; ++x) {
-                image[0][y][x] = Global_Funcs.clamp(image[0][y][x]+r);
-                image[1][y][x] = Global_Funcs.clamp(image[1][y][x]+g);
-                image[2][y][x] = Global_Funcs.clamp(image[2][y][x]+b);
-            }
+        int[] ASR = new int[256];
+        int[] ASG = new int[256];
+        int[] ASB = new int[256];
+        for(int i = 0; i < 256; i++){
+            ASR[i] = Global_Funcs.clamp(i+r);
+            ASG[i] = Global_Funcs.clamp(i+g);
+            ASB[i] = Global_Funcs.clamp(i+b);
         }
+        applyTable(new int[][]{ASR,ASG,ASB});
     }
 
     public void sub(int r, int g, int b){
@@ -122,13 +124,15 @@ public class Image extends ImageObjectAbstract {
     }
 
     public void mult(double r, double g, double b){
-        for (int y = 0; y < image[0].length; ++y) {
-            for (int x = 0; x < image[0][0].length; ++x) {
-                image[0][y][x] = Global_Funcs.clamp((int)(image[0][y][x]*r));
-                image[1][y][x] = Global_Funcs.clamp((int)(image[1][y][x]*g));
-                image[2][y][x] = Global_Funcs.clamp((int)(image[2][y][x]*b));
-            }
+        int[] ASR = new int[256];
+        int[] ASG = new int[256];
+        int[] ASB = new int[256];
+        for(int i = 0; i < 256; i++){
+            ASR[i] = Global_Funcs.clamp((int)(i*r));
+            ASG[i] = Global_Funcs.clamp((int)(i*g));
+            ASB[i] = Global_Funcs.clamp((int)(i*b));
         }
+        applyTable(new int[][]{ASR,ASG,ASB});
     }
 
     public void div(double r, double g, double b){

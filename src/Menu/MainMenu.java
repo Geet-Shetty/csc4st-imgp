@@ -43,15 +43,17 @@ public class MainMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        jfile.showOpenDialog(jm);
+                        int result = jfile.showOpenDialog(jm);
                         try {
-                            String path = jfile.getSelectedFile().toString();
-                            picture.loadImage(path);
+                            if(result == JFileChooser.APPROVE_OPTION) {
+                                String path = jfile.getSelectedFile().toString();
+                                picture.loadImage(path);
 
-                            hist_frame.load(picture);
+                                hist_frame.load(picture);
 
-                            main.repaint();
-                            sub_frame.repaint();
+                                main.repaint();
+                                sub_frame.repaint();
+                            }
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
@@ -63,9 +65,11 @@ public class MainMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        jfile.showSaveDialog(jm);
+                        int result = jfile.showSaveDialog(jm);
                         try {
-                            picture.saveImage(jfile.getSelectedFile().toString(),"PNG");
+                            if(result == JFileChooser.APPROVE_OPTION) {
+                                picture.saveImage(jfile.getSelectedFile().toString(), "PNG");
+                            }
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         } catch (NullPointerException nullPointerException){
