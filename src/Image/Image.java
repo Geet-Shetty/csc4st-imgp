@@ -52,7 +52,7 @@ public class Image extends ImageObjectAbstract {
     @Override
     public void loadImage(String filename) throws IOException {
         BufferedImage bi = ImageIO.read(new File(filename));
-        System.out.println(bi.getHeight() + "x" + bi.getWidth() + " : " + bi.getType());
+        //System.out.println(bi.getHeight() + "x" + bi.getWidth() + " : " + bi.getType());
 
         // -- BufferedImage -> int[][][]
         image = new int[3][bi.getHeight()][bi.getWidth()];
@@ -223,32 +223,36 @@ public class Image extends ImageObjectAbstract {
     }
 
     public void binarize(int threshold){
-        for(int i = 0; i < 3; i++) {
-            for (int j = 0; j < height; j++) {
-                for (int k = 0; k < width; k++) {
-                    if(image[i][j][k] < threshold){
-                        image[i][j][k] = 0;
-                    } else {
-                        image[i][j][k] = 255;
-                    }
-                }
+        int[] b = new int[256];
+        for(int i = 0; i < 256; i++){
+            if(i < threshold){
+                b[i] = 0;
+            } else {
+                b[i] = 255;
             }
         }
+        applyTable(new int[][]{b,b,b});
     }
 
     public double Luminance(int j, int k) {
         return 0.299 * image[0][j][k] + 0.587 * image[1][j][k] + 0.114 * image[2][j][k];
     }
 
-    public void setLuminance(){
+    public int[][][] createLuminance(){
+        int[][][] img = new int[3][][];
         for (int j = 0; j < height; j++) {
             for (int k = 0; k < width; k++) {
                 double y = Luminance(j,k);
-                image[0][j][k] = (int)y;
-                image[1][j][k] = (int)y;
-                image[2][j][k] = (int)y;
+                img[0][j][k] = (int)y;
+                img[1][j][k] = (int)y;
+                img[2][j][k] = (int)y;
             }
         }
+        return img;
+    }
+
+    public void setLuminance(){
+        image = createLuminance();
     }
 
     public void deSaturation(double s){ // s must be between 0 and 1
@@ -262,15 +266,58 @@ public class Image extends ImageObjectAbstract {
         }
     }
 
-    public int Otsu(){
+    // code from: http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html
+    public int Otsu(Histogram hist){
         int total = height * width;
-        int top = 256;
-        int wB = 0;
-        double max = 0.0;
+        double sum = 0;
+        int[][] data = createLuminance()[0];
+        int[] d_hist = new int[256];
+        Histogram.setHisto(d_hist, data);
+        for(int i = 0; i < 256; i++){
+            sum += i * d_hist[i];
+        }
 
-        return 0;
+        double sumB = 0;
+        int wB = 0;
+        int wF = 0;
+
+        double varMax = 0;
+        int threshold = 0;
+
+        for (int t=0 ; t<256 ; t++) {
+            wB += d_hist[t];
+            if (wB == 0) continue;
+
+            wF = total - wB;
+            if (wF == 0) break;
+
+            sumB += (float) (t * d_hist[t]);
+
+            double mB = sumB / wB;
+            double mF = (sum - sumB) / wF;
+
+            double varBetween = wB * wF * (mB - mF) * (mB - mF);
+
+            if (varBetween > varMax) {
+                varMax = varBetween;
+                threshold = t;
+            }
+        }
+        return threshold;
     }
 
-    public static void main(String args[]){}
+    public void Otsu_Binarize(Histogram hist){
+        binarize(Otsu(hist));
+    }
+
+    public void match(Histogram A, Image I){
+        Histogram R = new Histogram();
+        R.reload(I);
+        applyTable(A.MatchHistos(R));
+    }
+
+    public static void main(String args[]){
+        System.out.println("test");
+    }
 
 }

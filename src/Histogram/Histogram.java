@@ -39,14 +39,18 @@ public class Histogram {
             setSD();
     }
 
+    public static void setHisto(int[] channel, int[][] image){
+        for (int i = 0; i < image.length; i++) {
+            for (int j = 0; j < image[0].length; j++) {
+                channel[image[i][j]]++;
+            }
+        }
+    }
+
     private void setHistos(int[][][] image){
         for(int k = 0; k < 3; k++ ) {
             int[] histo = new int[256];
-            for (int i = 0; i < image[0][0].length; i++) {
-                for (int j = 0; j < image[0].length; j++) {
-                    histo[image[k][j][i]]++;
-                }
-            }
+            setHisto(histo,image[k]);
             hist[k] = histo;
         }
 //        System.out.println(getMin());
@@ -170,8 +174,6 @@ public class Histogram {
         return -1;
     }
 
-    
-
     public void Equalization(Image I){
         for(int i = 0; i < 3; i++){
             for(int j = 1; j < hist[0].length; j++){
@@ -189,7 +191,39 @@ public class Histogram {
         }
     }
 
+    public int[][] MatchHistos(Histogram hR) {
+        double[][] PA = Cdf(hist);
+        double[][] PR = Cdf(hR.hist);
+        int[][] fhs = new int[3][hist[0].length];
+        for(int i = 0; i < 3; i++) {
+            for (int a = 0; a < hist[0].length; a++) {
+                int j = hist[0].length - 1;
+                do {
+                    fhs[i][a] = j;
+                    j--;
+                } while (j > -1 && PA[i][a] <= PR[i][j]);
+            }
+        }
+        return fhs;
+    }
 
+    public static double[][] Cdf(int[][] hist){
+        double[][] P = new double[3][hist[0].length];
+        for(int i = 0; i < 3; i++){
+            int sum = 0;
+            for(int j = 0; j < hist[0].length; j++){
+                sum+=hist[i][j];
+            }
+
+            int c = hist[i][0];
+            P[i][0] = (double)c/sum;
+            for(int j = 1; j < hist[0].length; j++){
+                c+=hist[i][j];
+                P[i][j] = (double)c/sum;
+            }
+        }
+        return P;
+    }
 
     public static void main(String[] args) throws IOException {
     }
