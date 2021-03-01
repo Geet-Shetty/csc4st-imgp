@@ -234,12 +234,12 @@ public class Image extends ImageObjectAbstract {
         applyTable(new int[][]{b,b,b});
     }
 
-    public double Luminance(int j, int k) {
+    private double Luminance(int j, int k) {
         return 0.299 * image[0][j][k] + 0.587 * image[1][j][k] + 0.114 * image[2][j][k];
     }
 
-    public int[][][] createLuminance(){
-        int[][][] img = new int[3][][];
+    private int[][][] createLuminance(){
+        int[][][] img = new int[3][height][width];
         for (int j = 0; j < height; j++) {
             for (int k = 0; k < width; k++) {
                 double y = Luminance(j,k);
@@ -252,7 +252,15 @@ public class Image extends ImageObjectAbstract {
     }
 
     public void setLuminance(){
-        image = createLuminance();
+        for (int j = 0; j < height; j++) {
+            for (int k = 0; k < width; k++) {
+                double y = Luminance(j,k);
+                image[0][j][k] = (int)y;
+                image[1][j][k] = (int)y;
+                image[2][j][k] = (int)y;
+            }
+        }
+//        image = createLuminance();
     }
 
     public void deSaturation(double s){ // s must be between 0 and 1
@@ -267,7 +275,7 @@ public class Image extends ImageObjectAbstract {
     }
 
     // code from: http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html
-    public int Otsu(Histogram hist){
+    private int Otsu(Histogram hist){
         int total = height * width;
         double sum = 0;
         int[][] data = createLuminance()[0];

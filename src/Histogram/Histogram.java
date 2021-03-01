@@ -53,8 +53,6 @@ public class Histogram {
             setHisto(histo,image[k]);
             hist[k] = histo;
         }
-//        System.out.println(getMin());
-//        System.out.println(getMax());
     }
 
     private static double round(double d){
@@ -175,17 +173,17 @@ public class Histogram {
     }
 
     public void Equalization(Image I){
+        int[][] H = hist.clone();
         for(int i = 0; i < 3; i++){
-            for(int j = 1; j < hist[0].length; j++){
-                hist[i][j] += hist[i][j-1];
+            for(int j = 1; j < H[0].length; j++){
+                H[i][j] += H[i][j-1];
             }
         }
-
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < h; j++){
                 for(int k = 0; k < w; k++){
                     int[][][] img = I.getImage();
-                    img[i][j][k] = (int)(hist[i][img[i][j][k]] * 255.0 / w * h); // might need a clamp
+                    img[i][j][k] = ((H[i][img[i][j][k]] * 255) / (w * h)); // might need a clamp
                 }
             }
         }

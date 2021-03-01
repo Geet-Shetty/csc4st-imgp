@@ -33,8 +33,8 @@ public class MainMenu {
     private String[] bin_items = {"Input", "Otsu"};
     private Menu bin_menu = new Menu("Binarize", null, bin_items, menu.getDropdown());
 
-    private String[] hop_items = {"Equalization", "Match", "Luminance", "Desaturation"};
-    private Menu histo_op_menu = new Menu("Histo Ops", null, hop_items, menu.getDropdown());
+    private String[] hop_items = {"Equalize", "Match", "Luminance", "Desaturation"};
+    private Menu histo_op_menu = new Menu("Histo Ops", "D:/stuff/image", hop_items, menu.getDropdown());
 
     private Menu[] sub_menus = {sub1_menu1, sub2_menu2};
 
@@ -261,18 +261,20 @@ public class MainMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        jfile2.showOpenDialog(jm2);
-                        try {
-                            String path = jfile2.getSelectedFile().toString();
-                            Image picture2 = new Image();
-                            picture2.loadImage(path);
-                            picture.addImage(picture2);
-                        } catch (Exception Null) {
-                        }
-                        hist_frame.load(picture);
+                        int result = jfile2.showOpenDialog(jm2);
+                        if(result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                String path = jfile2.getSelectedFile().toString();
+                                Image picture2 = new Image();
+                                picture2.loadImage(path);
+                                picture.addImage(picture2);
+                            } catch (Exception Null) {
+                            }
+                            hist_frame.load(picture);
 
-                        main.repaint();
-                        sub_frame.repaint();
+                            main.repaint();
+                            sub_frame.repaint();
+                        }
                     }
                 }
         );
@@ -281,14 +283,112 @@ public class MainMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        jfile2.showOpenDialog(jm2);
-                        try {
-                            String path = jfile2.getSelectedFile().toString();
-                            Image picture2 = new Image();
-                            picture2.loadImage(path);
-                            picture.subImage(picture2);
-                        } catch (Exception Null) {
+                        int result = jfile2.showOpenDialog(jm2);
+                        if(result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                String path = jfile2.getSelectedFile().toString();
+                                Image picture2 = new Image();
+                                picture2.loadImage(path);
+                                picture.subImage(picture2);
+                            } catch (Exception Null) {
+                            }
+                            hist_frame.load(picture);
+
+                            main.repaint();
+                            sub_frame.repaint();
                         }
+                    }
+                }
+        );
+
+        // HISTO OPS
+
+        JFileChooser jfile3 =  histo_op_menu.getChooser();
+        JMenu jm3 = histo_op_menu.getFileD();
+        histo_op_menu.getItem("Equalize").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        hist_frame.getHisto().Equalization(picture);
+                        hist_frame.load(picture);
+
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        histo_op_menu.getItem("Match").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int result = jfile3.showOpenDialog(jm3);
+                        if(result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                String path = jfile3.getSelectedFile().toString();
+                                Image picture2 = new Image();
+                                picture2.loadImage(path);
+                                picture.match(hist_frame.getHisto(), picture2);
+                            } catch (Exception Null) {
+                            }
+                            hist_frame.load(picture);
+
+                            main.repaint();
+                            sub_frame.repaint();
+                        }
+                    }
+                }
+        );
+
+        histo_op_menu.getItem("Luminance").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        picture.setLuminance();
+                        hist_frame.load(picture);
+
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        histo_op_menu.getItem("Desaturation").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String[] inputs = {"s"};
+                        Dialog d = new Dialog(inputs,"Desaturation");
+                        picture.deSaturation(Double.parseDouble(d.getField("s")));
+                        hist_frame.load(picture);
+
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        bin_menu.getItem("Input").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String[] inputs = {"Threshold"};
+                        Dialog d = new Dialog(inputs,"Binarize");
+                        picture.binarize(Integer.parseInt(d.getField("Threshold")));
+                        hist_frame.load(picture);
+
+                        main.repaint();
+                        sub_frame.repaint();
+
+                    }
+                }
+        );
+
+        bin_menu.getItem("Otsu").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        picture.Otsu_Binarize(hist_frame.getHisto());
                         hist_frame.load(picture);
 
                         main.repaint();
