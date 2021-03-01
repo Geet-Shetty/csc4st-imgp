@@ -30,9 +30,16 @@ public class MainMenu {
     private String[] sub3_items3 = {"Add", "Sub"};
     private Menu sub3_menu3 = new Menu("Image Math", null, sub3_items3, menu.getDropdown());
 
+    private String[] bin_items = {"Input", "Otsu"};
+    private Menu bin_menu = new Menu("Binarize", null, bin_items, menu.getDropdown());
+
+    private String[] hop_items = {"Equalization", "Match", "Luminance", "Desaturation"};
+    private Menu histo_op_menu = new Menu("Histo Ops", null, hop_items, menu.getDropdown());
+
     private Menu[] sub_menus = {sub1_menu1, sub2_menu2};
 
     public MainMenu(Image picture, HistogramFrame hist_frame, application main, JFrame sub_frame){
+        histo_op_menu.addSubMenu(bin_menu);
         menu2.addSubMenu(sub3_menu3);
         menu1.addSubMenus(sub_menus);
 
