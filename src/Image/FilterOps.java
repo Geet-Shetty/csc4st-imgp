@@ -6,12 +6,12 @@ import java.util.Arrays;
 public class FilterOps {
     public static void main(String[] args) {
         int[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
-//        int[][] kernal = {{1,1,1}};
+//        int[][] kernal = {{1},{1},{1}};
 //        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
         int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
 //        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
-//        extend_pad(image,kernal,2,0);
-        mirror_pad(image,kernal,0,2);
+//        extend_pad(image,kernal,1,0);
+        mirror_pad(image,kernal,1,0);
     }
 
     public static void print_2d(int[][] data){
@@ -73,9 +73,8 @@ public class FilterOps {
             }
         }
 
-
         // extend top side (including corners)
-        for(int c = 0; c < temp_i.length+1; c++){
+        for(int c = 0; c < temp_i[0].length; c++){
             int num = temp_i[kdata[2]][c];
             for(int r = 0; r < kdata[2]; r++){
                 temp_i[r][c] = num;
@@ -83,7 +82,7 @@ public class FilterOps {
         }
 
         // extend bot side (including corners)
-        for(int c = 0; c < temp_i.length+1; c++){
+        for(int c = 0; c < temp_i[0].length; c++){
             int num = temp_i[kdata[2] + image.length-1][c];
             for(int r = kdata[2] + image.length; r < temp_i.length; r++){
                 temp_i[r][c] = num;
@@ -117,9 +116,8 @@ public class FilterOps {
             }
         }
 
-
         // mirror top (including corners)
-        for(int c = 0; c < temp_i.length+1; c++){
+        for(int c = 0; c < temp_i[0].length; c++){
             int count = kdata[2];
             for(int r = kdata[2]-1; r >-1; r--){
                 int num = temp_i[count++][c];
@@ -128,7 +126,7 @@ public class FilterOps {
         }
 
         // mirror bot (including corners)
-        for(int c = 0; c < temp_i.length+1; c++){
+        for(int c = 0; c < temp_i[0].length; c++){
             int count = kdata[2] + image.length-1;
             for(int r = kdata[2] + image.length; r < temp_i.length; r++){
                 int num = temp_i[count--][c];
