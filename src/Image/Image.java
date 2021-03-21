@@ -238,7 +238,7 @@ public class Image extends ImageObjectAbstract {
         return 0.299 * image[0][j][k] + 0.587 * image[1][j][k] + 0.114 * image[2][j][k];
     }
 
-    private int[][][] createLuminance(){
+    public int[][][] createLuminance(){
         int[][][] img = new int[3][height][width];
         for (int j = 0; j < height; j++) {
             for (int k = 0; k < width; k++) {
@@ -252,15 +252,7 @@ public class Image extends ImageObjectAbstract {
     }
 
     public void setLuminance(){
-        for (int j = 0; j < height; j++) {
-            for (int k = 0; k < width; k++) {
-                double y = Luminance(j,k);
-                image[0][j][k] = (int)y;
-                image[1][j][k] = (int)y;
-                image[2][j][k] = (int)y;
-            }
-        }
-//        image = createLuminance();
+        image = createLuminance();
     }
 
     public void deSaturation(double s){ // s must be between 0 and 1
@@ -275,31 +267,27 @@ public class Image extends ImageObjectAbstract {
     }
 
     // code from: http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html
-    private int Otsu(Histogram hist){
-        int total = height * width;
-        double sum = 0;
-        int[][] data = createLuminance()[0];
+    private int Otsu(){
+        int total = (height * width);
         int[] d_hist = new int[256];
-        Histogram.setHisto(d_hist, data);
-        for(int i = 0; i < 256; i++){
-            sum += i * d_hist[i];
-        }
+        Histogram.setHisto(d_hist,createLuminance()[0]);
+        double sum = Histogram.sum(d_hist);
 
         double sumB = 0;
-        int wB = 0;
-        int wF = 0;
+        long wB = 0; // must be long if you remove the float conversion
+        long wF = 0;
 
         double varMax = 0;
         int threshold = 0;
 
-        for (int t=0 ; t<256 ; t++) {
-            wB += d_hist[t];
+        for (int i=0 ; i<256 ; i++) {
+            wB += d_hist[i];
             if (wB == 0) continue;
 
             wF = total - wB;
             if (wF == 0) break;
 
-            sumB += (float) (t * d_hist[t]);
+            sumB += (i * d_hist[i]);
 
             double mB = sumB / wB;
             double mF = (sum - sumB) / wF;
@@ -308,14 +296,15 @@ public class Image extends ImageObjectAbstract {
 
             if (varBetween > varMax) {
                 varMax = varBetween;
-                threshold = t;
+                threshold = i;
             }
         }
+        System.out.println("end " + threshold);
         return threshold;
     }
 
     public void Otsu_Binarize(Histogram hist){
-        binarize(Otsu(hist));
+        binarize(Otsu());
     }
 
     public void match(Histogram A, Image I){
@@ -323,6 +312,8 @@ public class Image extends ImageObjectAbstract {
         R.reload(I);
         applyTable(A.MatchHistos(R));
     }
+
+    // Filters
 
     public static void main(String args[]){}
 

@@ -22,6 +22,8 @@ public class Histogram {
 
     private int w,h;
 
+    // build histo and get stats
+
     public void reload(Image I){
         h = I.getHeight();
         w = I.getWidth();
@@ -140,12 +142,6 @@ public class Histogram {
         }
     }
 
-    public int[][] getScaledHist(){
-        return scaled_hist;
-    }
-
-    public double[][] getData(){ return data; }
-
     public int getMin(){
         double p = .05 * w * h;
         int sum_p = 0;
@@ -171,6 +167,18 @@ public class Histogram {
         }
         return -1;
     }
+
+    // gets
+
+    public int[][] getScaledHist(){
+        return scaled_hist;
+    }
+
+    public double[][] getData(){ return data; }
+
+    public int[][] getHist(){ return hist; }
+
+    // Histo OPs
 
     public void Equalization(Image I){
         int[][] H = hist.clone();
@@ -221,6 +229,14 @@ public class Histogram {
             }
         }
         return P;
+    }
+
+    public static double sum(int[] channel){
+        double sum = 0;
+        for(int i = 0; i < 256; i++){
+           sum += i * channel[i];
+        }
+        return sum;
     }
 
     public static void main(String[] args) throws IOException {
