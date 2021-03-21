@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class FilterOps {
     public static void main(String[] args) {
-        int[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
+        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
 //        int[][] kernal = {{1},{1},{1}};
 //        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
         int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
@@ -20,7 +20,7 @@ public class FilterOps {
         }
     }
 
-    public static int[] find_kernal_distances(int[][] kernal, int row, int col){
+    public static int[] find_kernal_distances(double[][] kernal, int row, int col){
         if((row >= kernal.length || row < 0) && (col >= kernal[0].length || col < 0)) return null;
         int left = col;
         int right = kernal[0].length-1-col;
@@ -29,13 +29,13 @@ public class FilterOps {
         return new int[]{left,right,up,down};
     }
 
-    public static int[][] create_temp_image(int[][] image, int [] kernal_positions){
+    public static int[][] create_temp_image(int[][] image, int[] kernal_positions){
         int rows = image.length+kernal_positions[2]+kernal_positions[3];
         int cols = image[0].length+kernal_positions[0]+kernal_positions[1];
         return new int[rows][cols];
     }
 
-    public static int[][] pad_image(int[][] image, int[][] kernal, int row, int col, int[] kdata){
+    public static int[][] pad_image(int[][] image, double[][] kernal, int row, int col, int[] kdata){
 
         System.out.println(Arrays.toString(kdata));
         int[][] temp_i = create_temp_image(image,kdata);
@@ -52,7 +52,7 @@ public class FilterOps {
         return temp_i;
     }
 
-    public static int[][] extend_pad(int[][] image, int[][] kernal, int row, int col){
+    public static int[][] extend_pad(int[][] image, double[][] kernal, int row, int col){
         int[] kdata = find_kernal_distances(kernal,row,col);
         int[][] temp_i = pad_image(image, kernal, row, col, kdata);
         System.out.println();
@@ -93,7 +93,7 @@ public class FilterOps {
         return temp_i;
     }
 
-    public static int[][] mirror_pad(int[][] image, int[][] kernal, int row, int col){
+    public static int[][] mirror_pad(int[][] image, double[][] kernal, int row, int col){
         int[] kdata = find_kernal_distances(kernal,row,col);
         int[][] temp_i = pad_image(image, kernal, row, col, kdata);
         System.out.println();
@@ -137,8 +137,5 @@ public class FilterOps {
         print_2d(temp_i);
         return temp_i;
     }
-
-
-
 
 }
