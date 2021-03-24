@@ -21,37 +21,6 @@ public class FilterOps {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-//        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
-//        double[][] kernal = {{1},{1},{1}};
-//        int[][] kernal = {{1,1,1}};
-        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
-//        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
-//        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
-//        extend_pad(image,kernal,1,0);
-        //mirror_pad(image,kernal,2,2);
-//        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
-        print_2d(outlier(image,new int[]{3,1},1,padding.IGNORE));
-
-//        double[][] kernal2 = null;
-//        int[] origin = null;
-//        read_kernal("D:\\stuff\\image\\k.txt");
-//        print_2d(kernal2);
-
-    }
-
-    public static void print_2d(int[][] data){
-        for(int[] i : data){
-            System.out.println(Arrays.toString(i));
-        }
-    }
-
-    public static void print_2d(double[][] data){
-        for(double[] i : data){
-            System.out.println(Arrays.toString(i));
-        }
-    }
-
     // Helper Functions
 
     public static int[] find_kernal_distances(double[][] kernal, int row, int col){
@@ -121,15 +90,27 @@ public class FilterOps {
         }
     }
 
+    public static void print_2d(int[][] data){
+        for(int[] i : data){
+            System.out.println(Arrays.toString(i));
+        }
+    }
+
+    public static void print_2d(double[][] data){
+        for(double[] i : data){
+            System.out.println(Arrays.toString(i));
+        }
+    }
+
     // PADDINGS
 
     public static int[][] pad_image(int[][] image, double[][] kernal, int row, int col, int[] kdata){
 
-        System.out.println(Arrays.toString(kdata));
+//        System.out.println(Arrays.toString(kdata));
         int[][] temp_i = create_temp_image(image,kdata);
-        System.out.println("rows " + temp_i.length + " cols " + temp_i[0].length);
-        System.out.println("start " + kdata[2] + " , " + kdata[0]);
-        System.out.println("end " + (kdata[2] + image.length) + " , " + (kdata[0] + image[0].length));
+//        System.out.println("rows " + temp_i.length + " cols " + temp_i[0].length);
+//        System.out.println("start " + kdata[2] + " , " + kdata[0]);
+//        System.out.println("end " + (kdata[2] + image.length) + " , " + (kdata[0] + image[0].length));
 
         for(int i = kdata[2]; i < kdata[2]+ image.length; i++){
             for(int j = kdata[0]; j < kdata[0] + image[0].length; j++){
@@ -272,15 +253,13 @@ public class FilterOps {
         return in;
     }
 
+    // -- assume kernel dimensions are odd
+    //    the origin is the center
     public static int[][] median(int in[][], int[] lengths, padding p){ // len and origin is row,col
         if ((lengths[0] % 2 == 0) || (lengths[1] % 2 == 0)) {
             throw new IllegalArgumentException("kernel dimensions must be odd");
         }
 
-        // -- assume kernel dimensions are odd // TODO: still the case
-        //    the origin is the center // TODO: fixed for any origin
-        //    coefficients are non-negative // TODO: fixed for negatives i think
-        //    at least 1 non-zero coefficient // TODO: i think this req is fine
         int originrow = lengths[0]/2;
         int origincol = lengths[1]/2;
 
@@ -319,15 +298,11 @@ public class FilterOps {
         return in;
     }
 
-    public static int[][] outlier(int in[][], int[] lengths, int threshold, padding p){ // TODO: EDIT LOOPS
+    public static int[][] outlier(int in[][], int[] lengths, int threshold, padding p){
         if ((lengths[0] % 2 == 0) || (lengths[1] % 2 == 0)) {
             throw new IllegalArgumentException("kernel dimensions must be odd");
         }
 
-        // -- assume kernel dimensions are odd // TODO: still the case
-        //    the origin is the center // TODO: fixed for any origin
-        //    coefficients are non-negative // TODO: fixed for negatives i think
-        //    at least 1 non-zero coefficient // TODO: i think this req is fine
         int originrow = lengths[0]/2;
         int origincol = lengths[1]/2;
 
@@ -387,6 +362,27 @@ public class FilterOps {
         for(int[][] i: in.getImage()){
             outlier(i,lengths,threshold,p);
         }
+    }
+
+    // Main Test
+
+    public static void main(String[] args) throws IOException {
+//        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
+//        double[][] kernal = {{1},{1},{1}};
+//        int[][] kernal = {{1,1,1}};
+        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
+//        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
+//        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
+//        extend_pad(image,kernal,1,0);
+        //mirror_pad(image,kernal,2,2);
+//        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
+        print_2d(outlier(image,new int[]{3,1},1,padding.IGNORE));
+
+//        double[][] kernal2 = null;
+//        int[] origin = null;
+//        read_kernal("D:\\stuff\\image\\k.txt");
+//        print_2d(kernal2);
+
     }
     
 }
