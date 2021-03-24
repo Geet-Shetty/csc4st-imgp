@@ -25,18 +25,18 @@ public class FilterOps {
 //        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
 //        double[][] kernal = {{1},{1},{1}};
 //        int[][] kernal = {{1,1,1}};
-//        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
+        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
 //        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
 //        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
 //        extend_pad(image,kernal,1,0);
         //mirror_pad(image,kernal,2,2);
 //        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
-//        print_2d(outlier(image,new int[]{kernal.length,kernal[0].length},1,padding.IGNORE));
+        print_2d(outlier(image,new int[]{3,1},1,padding.IGNORE));
 
-        double[][] kernal2 = null;
-        int[] origin = null;
-        read_kernal("D:\\stuff\\image\\k.txt");
-        print_2d(kernal2);
+//        double[][] kernal2 = null;
+//        int[] origin = null;
+//        read_kernal("D:\\stuff\\image\\k.txt");
+//        print_2d(kernal2);
 
     }
 
@@ -136,7 +136,7 @@ public class FilterOps {
                 temp_i[i][j] = image[i-kdata[2]][j-kdata[0]];
             }
         }
-        print_2d(temp_i);
+//        print_2d(temp_i);
         return temp_i;
     }
 
@@ -176,7 +176,7 @@ public class FilterOps {
             }
         }
 
-        print_2d(temp_i);
+//        print_2d(temp_i);
         return temp_i;
     }
 
@@ -220,7 +220,7 @@ public class FilterOps {
             }
         }
 
-        print_2d(temp_i);
+//        print_2d(temp_i);
         return temp_i;
     }
 
@@ -349,19 +349,19 @@ public class FilterOps {
 
         for (int i = startr; i < endr; ++i) {
             for (int j = startc; j < endc; ++j) {
-                double avg = 0;
                 // -- loop through all kernel coefficients
+                double avg = 0;
                 for (int k = -kdata[2]; k <= kdata[3]; ++k) {
                     for (int l = -kdata[0]; l <= kdata[1]; ++l) {
                         // -- perform the convolution operation
                         avg += out[i + k][j + l];
                     }
                 }
-                avg /= lengths[0]*lengths[1];
-                if(Math.abs(out[i][j])-avg > threshold){
+                avg /= (lengths[0]*lengths[1]);
+                if(Math.abs(out[i][j]-avg) > threshold){
                     in[i-startr][j-startc] = (int)avg;
                 } else {
-                    in[i-startr][j-startc] = threshold;
+                    in[i-startr][j-startc] = out[i][j];
                 }
             }
         }
