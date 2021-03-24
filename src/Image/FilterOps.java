@@ -11,21 +11,33 @@ public class FilterOps {
 
     public enum padding {IGNORE, EXTEND, MIRROR};
 
+    public static class fileData {
+        public double[][] kernel;
+        public int[] origin;
+
+        public fileData(double[][] k, int[] o){
+            kernel = k;
+            origin = o;
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 //        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
-        double[][] kernal = {{1},{1},{1}};
+//        double[][] kernal = {{1},{1},{1}};
 //        int[][] kernal = {{1,1,1}};
 //        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
-        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
+//        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
 //        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
 //        extend_pad(image,kernal,1,0);
         //mirror_pad(image,kernal,2,2);
-        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
+//        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
 //        print_2d(outlier(image,new int[]{kernal.length,kernal[0].length},1,padding.IGNORE));
 
-//        double[][] kernal = null;
-//        int[] origin = null;
-//        read_kernal(kernal, origin,"D:\\stuff\\image\\k.txt");
+        double[][] kernal2 = null;
+        int[] origin = null;
+        read_kernal("D:\\stuff\\image\\k.txt");
+        print_2d(kernal2);
+
     }
 
     public static void print_2d(int[][] data){
@@ -66,9 +78,12 @@ public class FilterOps {
         return new int[rows][cols];
     }
 
-    public static void read_kernal(double[][] kernal, int[] origin, String path) throws IOException {
+    public static fileData read_kernal(String path) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(path));
         String line = reader.readLine(); // reads dimensions of kernal
+        double[][] kernal = null;
+        int[] origin = null;
+
         if(line != null){
             String[] dim = line.split(" ");
             kernal = new double[Integer.parseInt(dim[0])][Integer.parseInt(dim[1])];
@@ -88,6 +103,7 @@ public class FilterOps {
         print_2d(kernal);
         System.out.println();
         System.out.println(Arrays.toString(origin));
+        return new fileData(kernal,origin);
     }
 
     public static void linearscale(int[][] in){
@@ -251,6 +267,7 @@ public class FilterOps {
                 in[i-startr][j-startc] = (int)sum;
             }
         }
+        linearscale(in);
         System.out.println();
         return in;
     }
@@ -371,6 +388,5 @@ public class FilterOps {
             outlier(i,lengths,threshold,p);
         }
     }
-
     
 }

@@ -39,18 +39,6 @@ public class Dialog {
         }
     }
 
-//    public void pop_up(){
-//        int option = JOptionPane.showConfirmDialog(frame, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//        while(option == JOptionPane.OK_OPTION){
-//            option = JOptionPane.showConfirmDialog(frame, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-//        }
-    //        if(option == JOptionPane.OK_OPTION){
-//            for(String s: Fields.keySet()){
-//                System.out.println(s + " " + Fields.get(s).getText());
-//            }
-//        }
-//    }
-
     public String getField(String s){
         return Fields.get(s).getText();
     }

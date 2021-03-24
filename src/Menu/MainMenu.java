@@ -1,7 +1,9 @@
 package Menu;
 
 import Dialogs.Dialog;
+import Dialogs.DialogOption;
 import Histogram.HistogramFrame;
+import Image.FilterOps;
 import Image.Image;
 import Main.application;
 import Menu.Menu;
@@ -10,6 +12,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
+import static Image.FilterOps.*;
 
 public class MainMenu {
     private String[] items = {"Open", "Save", "Terminate", "CW VIS", "HW VIS"};
@@ -35,6 +39,9 @@ public class MainMenu {
 
     private String[] hop_items = {"Equalize", "Match", "Luminance", "Desaturation"};
     private Menu histo_op_menu = new Menu("Histo Ops", "D:/stuff/image", hop_items, menu.getDropdown());
+
+    private String[] f_items = {"General Convo", "Median", "Outlier"};
+    private Menu filter_ops_menu = new Menu("Filter Ops", "D:/stuff/image",f_items, menu.getDropdown());
 
     private Menu[] sub_menus = {sub1_menu1, sub2_menu2};
 
@@ -391,6 +398,91 @@ public class MainMenu {
                         picture.Otsu_Binarize(hist_frame.getHisto());
                         hist_frame.load(picture);
 
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        // FILTER OPS
+        String[] options = {"Ignore","Extend","Mirror"};
+
+        JFileChooser jfile4 =  filter_ops_menu.getChooser();
+        JMenu jm4 = filter_ops_menu.getFileD();
+        filter_ops_menu.getItem("General Convo").addActionListener( // TODO: decide on making sub menus here for padding option
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int result = jfile4.showOpenDialog(jm4);
+                        if(result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                String path = jfile4.getSelectedFile().toString();
+
+                                fileData f = FilterOps.read_kernal(path);
+
+                                DialogOption d = new DialogOption(options, "Pick Padding Method:", "Padding Selection");
+                                switch(d.getSelected()){
+                                    case "Ignore":
+                                        apply_convolve(picture,f.kernel,f.origin, padding.IGNORE);
+                                        break;
+                                    case "Extend":
+                                        apply_convolve(picture,f.kernel,f.origin, padding.EXTEND);
+                                        break;
+                                    case "Mirror":
+                                        apply_convolve(picture,f.kernel,f.origin, padding.MIRROR);
+                                }
+                                hist_frame.load(picture);
+                                main.repaint();
+                                sub_frame.repaint();
+                            } catch (Exception Null) {
+                            }
+                        }
+                    }
+                }
+        );
+
+        filter_ops_menu.getItem("Median").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DialogOption d_o = new DialogOption(options, "Pick Padding Method:", "Padding Selection");
+                        String[] dim = {"Row:", "Col:"};
+                        Dialog d = new Dialog(dim, "Dimensions");
+                        switch(d_o.getSelected()){
+                            case "Ignore":
+                                apply_median(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, padding.IGNORE);
+                                break;
+                            case "Extend":
+                                apply_median(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, padding.EXTEND);
+                                break;
+                            case "Mirror":
+                                apply_median(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, padding.MIRROR);
+                        }
+                        hist_frame.load(picture);
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        filter_ops_menu.getItem("Outlier").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DialogOption d_o = new DialogOption(options, "Pick Padding Method:", "Padding Selection");
+                        String[] dim = {"Row:", "Col:", "Threshold:"};
+                        Dialog d = new Dialog(dim, "Dimensions");
+                        switch(d_o.getSelected()){
+                            case "Ignore":
+                                apply_outlier(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, Integer.parseInt(d.getField("Threshold:")) ,padding.IGNORE);
+                                break;
+                            case "Extend":
+                                apply_outlier(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, Integer.parseInt(d.getField("Threshold:")) ,padding.EXTEND);
+                                break;
+                            case "Mirror":
+                                apply_outlier(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, Integer.parseInt(d.getField("Threshold:")) ,padding.MIRROR);
+                        }
+                        hist_frame.load(picture);
                         main.repaint();
                         sub_frame.repaint();
                     }
