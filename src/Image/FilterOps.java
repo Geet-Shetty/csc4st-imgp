@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class FilterOps {
 
@@ -85,7 +86,17 @@ public class FilterOps {
         }
         for(int i = 0; i < in.length; i++){
             for(int j = 0; j < in[0].length; j++){
-                in[i][j] = (in[i][j]-min)*255/(max-min);
+                in[i][j] = (int)(((in[i][j]-min)*255.0)/(max-min));
+            }
+        }
+    }
+
+    public static void scaleImage(int[][][] in){
+        int cMax = in[0][0][0];
+        int cMin = in[0][0][0];
+        for(int row = 0; row < in.length; row++){
+            for(int col  = 0; col < in[0].length; col++){
+                int tempMax = Collections.max(Arrays.asList(in[0][row][col]));
             }
         }
     }
@@ -207,6 +218,21 @@ public class FilterOps {
 
     // CONVOLVE
 
+    // Gauss Kernal
+
+    public static double[][] createGaussFilter(int h, int w, double sigma_x, double sigma_y){
+        if((h & 1) == 1 || (w & 1) == 1) {
+            double[][] kernel = new double[h][w];
+            for (int y = -h / 2; y <= h / 2; ++y) {
+                for (int x = -w / 2; x <= w / 2; ++x) {
+                    kernel[y + h / 2][x + w / 2] = Math.exp(-(((x * x) / (2 * sigma_x * sigma_x)) + ((y * y) / (2 * sigma_y * sigma_y))));
+                }
+            }
+            return kernel;
+        }
+        return null;
+    }
+
     public static int[][] convolve (int in[][], double kernel[][], int[] origin, padding p) throws IllegalArgumentException
     {
         if ((kernel.length % 2 == 0) || (kernel[0].length % 2 == 0)) {
@@ -242,7 +268,7 @@ public class FilterOps {
                 for (int k = -kdata[2]; k <= kdata[3]; ++k) {
                     for (int l = -kdata[0]; l <= kdata[1]; ++l) {
                         // -- perform the convolution operation
-                        sum += out[i + k][j + l] * kernel[k + originrow][l + origincol]; // TODO: LINEARLY SCALE
+                        sum += out[i + k][j + l] * kernel[k + originrow][l + origincol];
                     }
                 }
                 in[i-startr][j-startc] = (int)sum;
@@ -251,6 +277,12 @@ public class FilterOps {
         linearscale(in);
         System.out.println();
         return in;
+    }
+
+    public static void apply_gauss(Image i, int h, int w, double sigma_x, double sigma_y,padding p){
+        double[][] kernel = createGaussFilter(h, w, sigma_x, sigma_y);
+        if(kernel != null)
+            apply_convolve(i,kernel, new int[]{h/2,w/2}, p);
     }
 
     // -- assume kernel dimensions are odd
@@ -370,19 +402,20 @@ public class FilterOps {
 //        double[][] kernal = {{1,1,1},{1,1,1},{1,1,1}};
 //        double[][] kernal = {{1},{1},{1}};
 //        int[][] kernal = {{1,1,1}};
-        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
+//        int[][] image = {{1,2,3,4},{5,6,7,8},{9,9,9,9},{2,1,1,2}};
 //        int[][] image = {{1,2,3,4},{5,6,7,8},{2,1,1,2}};
 //        pad_image(image, kernal, 1,1,find_kernal_distances(kernal,1,1));
 //        extend_pad(image,kernal,1,0);
         //mirror_pad(image,kernal,2,2);
 //        print_2d(convolve(image,kernal,new int[]{0,0},padding.MIRROR));
-        print_2d(outlier(image,new int[]{3,1},1,padding.IGNORE));
-
+//        print_2d(outlier(image,new int[]{3,1},1,padding.IGNORE));
 //        double[][] kernal2 = null;
 //        int[] origin = null;
 //        read_kernal("D:\\stuff\\image\\k.txt");
 //        print_2d(kernal2);
 
+        double[][] kernal = createGaussFilter(5,5,2,2);
+        print_2d(kernal);
     }
     
 }

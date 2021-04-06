@@ -40,7 +40,7 @@ public class MainMenu {
     private String[] hop_items = {"Equalize", "Match", "Luminance", "Desaturation"};
     private Menu histo_op_menu = new Menu("Histo Ops", "D:/stuff/image", hop_items, menu.getDropdown());
 
-    private String[] f_items = {"General Convo", "Median", "Outlier"};
+    private String[] f_items = {"General Convo", "Median", "Outlier", "Gauss"};
     private Menu filter_ops_menu = new Menu("Filter Ops", "D:/stuff/image",f_items, menu.getDropdown());
 
     private Menu[] sub_menus = {sub1_menu1, sub2_menu2};
@@ -481,6 +481,30 @@ public class MainMenu {
                                 break;
                             case "Mirror":
                                 apply_outlier(picture,new int[]{Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:"))}, Integer.parseInt(d.getField("Threshold:")) ,padding.MIRROR);
+                        }
+                        hist_frame.load(picture);
+                        main.repaint();
+                        sub_frame.repaint();
+                    }
+                }
+        );
+
+        filter_ops_menu.getItem("Gauss").addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DialogOption d_o = new DialogOption(options, "Pick Padding Method:", "Padding Selection");
+                        String[] dim = {"Row:", "Col:","Sigma X:", "Sigma Y:"};
+                        Dialog d = new Dialog(dim, "Dimensions");
+                        switch(d_o.getSelected()){
+                            case "Ignore":
+                               apply_gauss(picture, Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:")), Integer.parseInt(d.getField("Sigma X:")), Integer.parseInt(d.getField("Sigma Y:")),padding.IGNORE);
+                                break;
+                            case "Extend":
+                                apply_gauss(picture, Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:")), Integer.parseInt(d.getField("Sigma X:")), Integer.parseInt(d.getField("Sigma Y:")),padding.EXTEND);
+                                break;
+                            case "Mirror":
+                                apply_gauss(picture, Integer.parseInt(d.getField("Row:")), Integer.parseInt(d.getField("Col:")), Integer.parseInt(d.getField("Sigma X:")), Integer.parseInt(d.getField("Sigma Y:")),padding.MIRROR);
                         }
                         hist_frame.load(picture);
                         main.repaint();
