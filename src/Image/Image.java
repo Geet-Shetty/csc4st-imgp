@@ -27,6 +27,8 @@ public class Image extends ImageObjectAbstract {
         return image;
     }
 
+    public void setImage(int[][][] i) { image = i; }
+
     @Override
     public int[] getPixel(int y, int x) throws IndexOutOfBoundsException {
         int[] pixel = {image[0][y][x],image[1][y][x],image[2][y][x]};

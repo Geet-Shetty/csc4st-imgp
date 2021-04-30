@@ -82,6 +82,7 @@ public class MainMenu {
                         int result = jfile.showSaveDialog(jm);
                         try {
                             if(result == JFileChooser.APPROVE_OPTION) {
+                                System.out.println(jfile.getSelectedFile().toString());
                                 picture.saveImage(jfile.getSelectedFile().toString(), "PNG");
                             }
                         } catch (IOException ioException) {
