@@ -133,7 +133,7 @@ public class HoughTransform
                 if(x==180)
                     outputImage.setRGB(x, arrayData.height - 1 - y, Color.CYAN.getRGB()); // the blue hurt my eyes
                 else
-                    outputImage.setRGB(x, arrayData.height - 1 - y, (n << 16) | (n << 8) | 0x0 | -0x01000000); // the blue hurt my eyes
+                    outputImage.setRGB(x, arrayData.height - 1 - y, (n << 16) | (n << 8) | -0x01000000); // the blue hurt my eyes
             }
         }
         ImageIO.write(outputImage, "PNG", new File(filename));
