@@ -65,7 +65,7 @@ public class HoughTransform
         }
 
         public int get(int x, int y)
-        {  return dataArray[y * width + x];  }
+        {  return dataArray[y * width + x];  } // y x
 
         public void set(int x, int y, int value)
         {  dataArray[y * width + x] = value;  }
@@ -130,10 +130,11 @@ public class HoughTransform
             {
 
                 int n = Math.min((int)Math.round(arrayData.get(x, y) * 255.0 / max), 255);
-                if(x==180)
-                    outputImage.setRGB(x, arrayData.height - 1 - y, Color.CYAN.getRGB()); // the blue hurt my eyes
-                else
-                    outputImage.setRGB(x, arrayData.height - 1 - y, (n << 16) | (n << 8) | -0x01000000); // the blue hurt my eyes
+//                if(x==180)
+//                    outputImage.setRGB(x, arrayData.height - 1 - y, Color.CYAN.getRGB()); // the blue hurt my eyes
+//                else
+                System.out.println((n << 16) | (n << 8) | n);
+                    outputImage.setRGB(x, arrayData.height - 1 - y, (n << 16) | (n << 8) | n | Color.MAGENTA.getRGB());
             }
         }
         ImageIO.write(outputImage, "PNG", new File(filename));
@@ -154,7 +155,7 @@ public class HoughTransform
     public static void main(String[] args) throws IOException
     {
         Image pic = new Image();
-        pic.loadImage("D:/stuff/image/NoisyCafeWall.png");
+        pic.loadImage("D:/stuff/image/killert.png");
         FilterOps.apply_median(pic,new int[]{5,5}, FilterOps.padding.IGNORE);
         pic.saveImage("D:/stuff/image/CleanedCafeWall.png","PNG");
 
